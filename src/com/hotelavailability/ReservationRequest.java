@@ -7,7 +7,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class ReservationRequest {
@@ -76,14 +79,57 @@ public class ReservationRequest {
                 }
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+
 		
 		for(Bookings value : BookingsArray) {
 		System.out.println(value.getHotel() + " : " + value.getCheckIn());
 		}	
+	
+	
+		HashMap<String, HashMap<Date,Integer>> hashResult = new HashMap<String, HashMap<Date,Integer>>();
+		HashMap<Date, Integer>innerMap = new HashMap<Date, Integer>();
+		
+		
+		for(Bookings value : BookingsArray) {
+			System.out.println(value.getHotel().trim());
+			if(hashResult.containsKey(value.getHotel())){
+				//System.out.println(value.getHotel());
+			
+				if(innerMap.containsKey(value.getCheckIn())) {
+					innerMap.put(value.getCheckIn(), innerMap.get(value.getCheckIn())+1);
+					hashResult.put(value.getHotel(), innerMap);
+				}
+				else {
+					innerMap.put(value.getCheckIn(), 1);
+					hashResult.put(value.getHotel(), innerMap);
+				}
+				
+			}
+			else {
+				innerMap.put(value.getCheckIn(), 1);
+				hashResult.put(value.getHotel().trim(), innerMap);
+			}
+			
+		}
+	
+		
+		for (Entry<String, HashMap<Date, Integer>> entry : hashResult.entrySet()) {
+			System.out.println("HotelName: " + entry.getKey() + "; value: " + entry.getValue());
+            System.out.println("********");
+			for(Entry<Date, Integer> entry2 : innerMap.entrySet()) {
+            	 System.out.println("Date: " + entry2.getKey() + "; value: " + entry2.getValue());
+            	 System.out.println("-------");
+            }
+            
+            
+        }
+		
+		
+		
 	}
-
+	
 }
 		
