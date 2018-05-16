@@ -57,7 +57,6 @@ public class ReservationRequest {
                 try {
 					startDate = (Date) formatter.parse(values[1]);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
                 endDate = (Date) formatter.parse(values[2]);
@@ -85,7 +84,7 @@ public class ReservationRequest {
 
 		
 		for(Bookings value : BookingsArray) {
-		System.out.println(value.getHotel() + " : " + value.getCheckIn());
+		System.out.println(value.getHotel() + " : " + value.getOccupiedDate());
 		}	
 	
 	
@@ -93,27 +92,23 @@ public class ReservationRequest {
 		HashMap<Date, Integer>innerMap = new HashMap<Date, Integer>();
 		
 		
-		for(Bookings value : BookingsArray) {
-			System.out.println(value.getHotel().trim());
-			if(hashResult.containsKey(value.getHotel())){
-				//System.out.println(value.getHotel());
-			
-				if(innerMap.containsKey(value.getCheckIn())) {
-					innerMap.put(value.getCheckIn(), innerMap.get(value.getCheckIn())+1);
-					hashResult.put(value.getHotel(), innerMap);
-				}
-				else {
-					innerMap.put(value.getCheckIn(), 1);
-					hashResult.put(value.getHotel(), innerMap);
-				}
-				
-			}
-			else {
-				innerMap.put(value.getCheckIn(), 1);
-				hashResult.put(value.getHotel().trim(), innerMap);
-			}
-			
-		}
+	
+				for (Bookings value : BookingsArray) {
+				            if (hashResult.containsKey(value.getHotel())) {
+				                innerMap = hashResult.get(value.getHotel().trim());
+				                if (innerMap.containsKey(value.getOccupiedDate())) {
+				                    innerMap.put(value.getOccupiedDate(), innerMap.get(value.getOccupiedDate()) + 1);
+				                    hashResult.put(value.getHotel().trim(), innerMap);
+				                } else {
+				                    innerMap.put(value.getOccupiedDate(), 1);
+				                    hashResult.put(value.getHotel().trim(), innerMap);
+				                }
+				            } else {
+				                innerMap = new HashMap<Date, Integer>();
+				                innerMap.put(value.getOccupiedDate(), 1);
+				                hashResult.put(value.getHotel().trim(), innerMap);
+				            }
+				        }
 	
 		
 		for (Entry<String, HashMap<Date, Integer>> entry : hashResult.entrySet()) {
