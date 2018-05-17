@@ -9,8 +9,8 @@ public class Bookings {
 	 */
 	
 	private String hotel;
-	private Date checkIn;
-	private Date checkOut;
+	private Date OccupiedDate;
+	
 	
 	public String getHotel() {
 		return hotel;
@@ -18,22 +18,17 @@ public class Bookings {
 	public void setHotel(String hotel) {
 		this.hotel = hotel;
 	}
-	public Date getCheckIn() {
-		return checkIn;
-	}
-	public void setCheckIn(Date checkIn) {
-		this.checkIn = checkIn;
-	}
-	public Date getCheckOut() {
-		return checkOut;
-	}
-	public void setCheckOut(Date checkOut) {
-		this.checkOut = checkOut;
-	}
+	
 
-	public Bookings(String hotel, Date checkin) {
+	public Date getOccupiedDate() {
+		return OccupiedDate;
+	}
+	public void setOccupiedDate(Date occupiedDate) {
+		OccupiedDate = occupiedDate;
+	}
+	public Bookings(String hotel, Date OccupiedDate) {
 		this.hotel = hotel;
-		this.checkIn = checkin;
+		this.OccupiedDate = OccupiedDate;
 		
 	}
 }
