@@ -23,8 +23,8 @@ public class ReservationRequest {
 		
 		String fileName = "metropolis_hotels.csv";
 		String bookingsfile = "metropolis_bookings.csv";
-		Date checkIn = new Date();
-		Date checkOut = new Date();
+		String checkIn = "18-02-04";
+		String checkOut = "18-02-06";
 		File file = new File(fileName);
 
 		/*
@@ -32,6 +32,8 @@ public class ReservationRequest {
 		 */
 		
 		ArrayList<HotelsInfo> HotelsInfoArray = new ArrayList<HotelsInfo>();
+		
+//		HotelsInfoArray = (ArrayList<HotelsInfo>) populateHotelsList(fileName);
 		try {
 			Scanner inputStream = new Scanner(file);
 			while (inputStream.hasNext()) {
@@ -104,22 +106,6 @@ public class ReservationRequest {
 	}
 		
 		
-//		for (Bookings value : BookingsArray) {
-//			System.out.println(value.getHotel() + " : " + value.getOccupiedDate());
-//		}
-
-//		for (Entry<String, HashMap<Date, Integer>> entry : resultHashMap.entrySet()) {
-//			System.out.println("HotelName: " + entry.getKey() + "; value: " + entry.getValue());
-//			System.out.println("********");
-//			for (Entry<Date, Integer> entry2 : innerMap.entrySet()) {
-//				System.out.println("Date: " + entry2.getKey() + "; value: " + entry2.getValue());
-//				System.out.println("-------");
-//			}
-//
-//		}
-//		
-//	}
-
 	
 	
 	/*
@@ -153,13 +139,59 @@ public class ReservationRequest {
 	}
 	
 	
+//	public static List populateHotelsList(String hotelsFile) {
+//		ArrayList<HotelsInfo> HotelsInfoArray = new ArrayList<HotelsInfo>();
+//		
+//		Scanner inputStream = new Scanner(hotelsFile);
+//		while (inputStream.hasNext()) {
+//			String data = inputStream.next();
+//			String[] values = data.split(",");
+//			HotelsInfoArray.add(new HotelsInfo(values[0], Integer.parseInt(values[1])));
+//		}
+//		inputStream.close();
+//		
+//		return HotelsInfoArray;
+//		
+//	}
 	
-	public static List hotelsAvailable(Date checkIn, Date CheckOut,HashMap<String, HashMap<Date, Integer>> resultHashMap) {
+	
+	
+	public static List hotelsAvailable(String checkIn, String checkOut, HashMap<String, HashMap<Date, Integer>> resultHashMap) {
 		List<String> result= new ArrayList<String>();
+		List<Date> bookingDates = new ArrayList<Date>();
+		bookingDates = getDates(checkIn, checkOut);
+		
+		
 		
 		return result;
 
 	}
 	
-	
+	public static List<Date> getDates(String checkIn, String checkOut) {
+		DateFormat formatter;
+		List<Date> dates = new ArrayList<Date>();
+
+		formatter = new SimpleDateFormat("yy-MM-dd");
+		Date startDate = null;
+		Date endDate = null;
+
+		try {
+			startDate = (Date) formatter.parse(checkIn);
+
+			endDate = (Date) formatter.parse(checkOut);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		long interval = 24 * 1000 * 60 * 60;
+		long startTime = startDate.getTime();
+		long endTime = endDate.getTime();
+
+		while (startTime <= endTime) {
+			dates.add(new Date(startTime));
+			startTime += interval;
+			// return dates;
+		}
+		return dates;
+	}
 }
