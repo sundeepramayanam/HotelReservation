@@ -16,7 +16,7 @@ public class Bookings {
 		return hotel;
 	}
 	public void setHotel(String hotel) {
-		this.hotel = hotel;
+		this.hotel = hotel.trim();
 	}
 	
 

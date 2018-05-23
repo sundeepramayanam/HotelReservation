@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class ReservationRequest {
@@ -36,13 +35,19 @@ public class ReservationRequest {
 			while (inputStream.hasNext()) {
 				String data = inputStream.next();
 				String[] values = data.split(",");
-				HotelsInfoArray.add(new HotelsInfo(values[0], Integer.parseInt(values[1])));
+				
+				StringBuilder key = new StringBuilder();
+				for (char c : values[0].toCharArray()) {
+					if (Character.isAlphabetic(c)) {
+						key.append(c);
+					}
+				}
+				HotelsInfoArray.add(new HotelsInfo(values[0].trim(), values[1]));
 			}
 			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 
 		File file1 = new File(bookingsfile);
 		ArrayList<Bookings> BookingsArray = new ArrayList<Bookings>();
@@ -93,60 +98,62 @@ public class ReservationRequest {
 
 		HashMap<String, HashMap<Date, Integer>> hotelToNumberOfRooms = new HashMap<String, HashMap<Date, Integer>>();
 		hotelToNumberOfRooms = hotelToNumberOfRooms(HotelsInfoArray, BookingsArray);
-		System.out.println(hotelToNumberOfRooms);
-		
+//		System.out.println(hotelToNumberOfRooms);
 
 		List<String> displayHotels = hotelsAvailable(checkIn, checkOut, hotelToNumberOfRooms, HotelsInfoArray);
 
 	}
 
-	
-	public static HashMap<String, HashMap<Date, Integer>> hotelToNumberOfRooms(ArrayList<HotelsInfo> hotelsInfo, ArrayList<Bookings> bookings) {
+	public static HashMap<String, HashMap<Date, Integer>> hotelToNumberOfRooms(ArrayList<HotelsInfo> hotelsInfo,
+			ArrayList<Bookings> bookings) {
 
-		ArrayList<Bookings> BookingsArray = bookings;
+		ArrayList<Bookings> bookingsArray = bookings;
 
 		HashMap<String, HashMap<Date, Integer>> hashResult = new HashMap<String, HashMap<Date, Integer>>();
 		HashMap<Date, Integer> innerMap = new HashMap<Date, Integer>();
 
-		for (Bookings value : BookingsArray) {
-			if (hashResult.containsKey(value.getHotel())) {
-				innerMap = hashResult.get(value.getHotel().trim());
+		for (Bookings value : bookingsArray) {
+			if (hashResult.containsKey(value.getHotel().trim().toLowerCase())) {
+				innerMap = hashResult.get(value.getHotel().trim().toLowerCase());
 				if (innerMap.containsKey(value.getOccupiedDate())) {
 					innerMap.put(value.getOccupiedDate(), innerMap.get(value.getOccupiedDate()) + 1);
-					hashResult.put(value.getHotel().trim(), innerMap);
+					hashResult.put(value.getHotel().trim().toLowerCase(), innerMap);
 				} else {
 					innerMap.put(value.getOccupiedDate(), 1);
-					hashResult.put(value.getHotel().trim(), innerMap);
+					hashResult.put(value.getHotel().trim().toLowerCase(), innerMap);
 				}
 			} else {
 				innerMap = new HashMap<Date, Integer>();
 				innerMap.put(value.getOccupiedDate(), 1);
-				hashResult.put(value.getHotel().trim(), innerMap);
+				hashResult.put(value.getHotel().trim().toLowerCase(), innerMap);
 			}
 		}
 		return hashResult;
 	}
 
 	public static List<String> hotelsAvailable(String checkIn, String checkOut,
-			HashMap<String, HashMap<Date, Integer>> resultHashMap, ArrayList<HotelsInfo> HotelsInfoArray ) {
-		
+			HashMap<String, HashMap<Date, Integer>> resultHashMap, ArrayList<HotelsInfo> hotelsInfoArray) {
+
 		List<String> result = new ArrayList<String>();
 		List<Date> requestedDates = new ArrayList<Date>();
 		requestedDates = getDates(checkIn, checkOut);
-		
-		
-		for (HotelsInfo hotelsInfo : HotelsInfoArray) {
+
+		for (HotelsInfo hotelsInfo : hotelsInfoArray) {
+//			System.out.println("begi.....");
 			String hotelName = hotelsInfo.getHotelName();
 			int noOfRooms = hotelsInfo.getNumberOfRooms();
-			if(resultHashMap.containsKey(hotelName)) {
+			
+//			System.out.println(resultHashMap.get(hotelName.trim()));
+			
+			if (resultHashMap.containsKey(hotelName.trim())) {
 				boolean hotelFlag = false;
-				
+
 				HashMap<Date, Integer> valueMap = resultHashMap.get(hotelName);
-				
+
 				for (Date date : requestedDates) {
 					if (valueMap.containsKey(date)) {
 						int numOfRoomsBooked = valueMap.get(date);
-						if (numOfRoomsBooked < getTotalRoomsForHotel(hotelName,HotelsInfoArray)) {
+						if (numOfRoomsBooked < noOfRooms) {
 							hotelFlag = true;
 						} else {
 							hotelFlag = false;
@@ -155,47 +162,15 @@ public class ReservationRequest {
 						hotelFlag = true;
 					}
 				}
-				
+
 				if (hotelFlag) {
-					System.out.println(hotelName);
+					System.out.println("Result:" + hotelName.trim().toLowerCase());
 				}
 			} else {
-				System.out.println(hotelName);
+				System.out.println("Result:" +hotelName.trim().toLowerCase());
 			}
-
-				
+//			System.out.println("end.....");
 		}
-		
-		
-		for (Map.Entry<String, HashMap<java.util.Date, java.lang.Integer>> entry : resultHashMap.entrySet()) {
-			
-			boolean hotelFlag = false;
-			String key = entry.getKey();
-			HashMap<java.util.Date, java.lang.Integer> valueMap = entry.getValue();
-			
-			for (Date date : requestedDates) {
-				if (valueMap.containsKey(date)) {
-					int numOfRoomsBooked = valueMap.get(date);
-					if (numOfRoomsBooked < getTotalRoomsForHotel(key,HotelsInfoArray)) {
-						hotelFlag = true;
-					} else {
-						hotelFlag = false;
-					}
-				} else {
-					hotelFlag = true;
-				}
-			}
-			
-			if (hotelFlag) {
-				System.out.println(key);
-			}
-			
-			
-		}
-
-		
-		
-
 		return result;
 
 	}
@@ -245,16 +220,16 @@ public class ReservationRequest {
 			System.exit(1);
 		}
 	}
-	
+
 	public static int getTotalRoomsForHotel(String hotelName, ArrayList<HotelsInfo> HotelsInfoArray) {
 		int value = 0;
-		
+
 		for (HotelsInfo hotelsInfo : HotelsInfoArray) {
-			if(hotelsInfo.getHotelName().equals(hotelName)) {
+			if (hotelsInfo.getHotelName().trim().toLowerCase().equals(hotelName.toLowerCase())) {
 				return hotelsInfo.getNumberOfRooms();
 			}
 		}
-		
+
 		return value;
 	}
 }
