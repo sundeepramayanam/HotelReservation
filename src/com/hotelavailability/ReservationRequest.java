@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import com.exceptionForHotelReservation.FileEmptyException;
 import com.exceptionForHotelReservation.InvalidDateException;
 import com.exceptionForHotelReservation.InvalidDateFormatException;
 
@@ -20,13 +21,14 @@ public class ReservationRequest {
 	 * 
 	 * @param args
 	 * @throws ParseException
+	 * @throws FileEmptyException 
 	 */
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) throws ParseException, FileEmptyException {
 
 		String fileName = "metropolis_hotels.csv";
 		String bookingsfile = "metropolis_bookings.csv";
-		String checkIn = "18-02-08";
+		String checkIn = "18-02-04";
 		String checkOut = "18-02-06";
 		
 		
@@ -45,7 +47,9 @@ public class ReservationRequest {
 
 		try {
 			Scanner inputStream = new Scanner(file);
+			boolean fileEmpty = false;
 			while (inputStream.hasNext()) {
+				fileEmpty = true;
 				String data = inputStream.next();
 				String[] values = data.split(",");
 
@@ -57,6 +61,9 @@ public class ReservationRequest {
 				}
 				HotelsInfoArray.add(new HotelsInfo(values[0].trim(), values[1]));
 			}
+			if(!fileEmpty) {
+				throw new FileEmptyException("metropolis_hotels.csv file is Empty");
+			}
 			inputStream.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -66,7 +73,9 @@ public class ReservationRequest {
 		ArrayList<Bookings> BookingsArray = new ArrayList<Bookings>();
 		try {
 			Scanner inputStream1 = new Scanner(file1);
+			boolean fileEmpty1 = false;
 			while (inputStream1.hasNext()) {
+				fileEmpty1 = true;
 				String data = inputStream1.next();
 				String[] values = data.split(",");
 				DateFormat formatter;
@@ -102,6 +111,9 @@ public class ReservationRequest {
 					}
 					BookingsArray.add(new Bookings(key.toString(), lDate));
 				}
+			}
+			if(!fileEmpty1) {
+				throw new FileEmptyException("metropolis_bookings.csv file is empty");
 			}
 			inputStream1.close();
 		} catch (FileNotFoundException e) {
