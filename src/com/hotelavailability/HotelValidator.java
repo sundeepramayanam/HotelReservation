@@ -5,6 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.exceptionForHotelReservation.InvalidDateException;
+import com.exceptionForHotelReservation.InvalidDateFormatException;
+
 public class HotelValidator {
 
 	public HotelValidator() {

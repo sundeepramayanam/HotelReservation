@@ -1,4 +1,4 @@
-package com.hotelavailability;
+package com.exceptionForHotelReservation;
 
 public class InvalidDateException extends Exception {
 

@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import com.exceptionForHotelReservation.InvalidDateException;
+import com.exceptionForHotelReservation.InvalidDateFormatException;
+
 public class ReservationRequest {
 
 	/**
