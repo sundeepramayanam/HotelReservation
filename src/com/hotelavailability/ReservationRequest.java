@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class ReservationRequest {
@@ -24,8 +23,19 @@ public class ReservationRequest {
 
 		String fileName = "metropolis_hotels.csv";
 		String bookingsfile = "metropolis_bookings.csv";
-		String checkIn = "18-02-04";
+		String checkIn = "18-02-08";
 		String checkOut = "18-02-06";
+		
+		
+		try {
+			HotelValidator.checkInvalidDates(checkIn, checkOut);
+		} catch (InvalidDateException | InvalidDateFormatException e1 ) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		
 		File file = new File(fileName);
 
 		ArrayList<HotelsInfo> HotelsInfoArray = new ArrayList<HotelsInfo>();
@@ -35,7 +45,7 @@ public class ReservationRequest {
 			while (inputStream.hasNext()) {
 				String data = inputStream.next();
 				String[] values = data.split(",");
-				
+
 				StringBuilder key = new StringBuilder();
 				for (char c : values[0].toCharArray()) {
 					if (Character.isAlphabetic(c)) {
@@ -48,10 +58,9 @@ public class ReservationRequest {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
+		
 		File file1 = new File(bookingsfile);
 		ArrayList<Bookings> BookingsArray = new ArrayList<Bookings>();
-
 		try {
 			Scanner inputStream1 = new Scanner(file1);
 			while (inputStream1.hasNext()) {
@@ -98,7 +107,7 @@ public class ReservationRequest {
 
 		HashMap<String, HashMap<Date, Integer>> hotelToNumberOfRooms = new HashMap<String, HashMap<Date, Integer>>();
 		hotelToNumberOfRooms = hotelToNumberOfRooms(HotelsInfoArray, BookingsArray);
-//		System.out.println(hotelToNumberOfRooms);
+		// System.out.println(hotelToNumberOfRooms);
 
 		List<String> displayHotels = hotelsAvailable(checkIn, checkOut, hotelToNumberOfRooms, HotelsInfoArray);
 
@@ -139,12 +148,12 @@ public class ReservationRequest {
 		requestedDates = getDates(checkIn, checkOut);
 
 		for (HotelsInfo hotelsInfo : hotelsInfoArray) {
-//			System.out.println("begi.....");
+			// System.out.println("begi.....");
 			String hotelName = hotelsInfo.getHotelName();
 			int noOfRooms = hotelsInfo.getNumberOfRooms();
-			
-//			System.out.println(resultHashMap.get(hotelName.trim()));
-			
+
+			// System.out.println(resultHashMap.get(hotelName.trim()));
+
 			if (resultHashMap.containsKey(hotelName.trim())) {
 				boolean hotelFlag = false;
 
@@ -167,9 +176,8 @@ public class ReservationRequest {
 					System.out.println("Result:" + hotelName.trim().toLowerCase());
 				}
 			} else {
-				System.out.println("Result:" +hotelName.trim().toLowerCase());
+				System.out.println("Result:" + hotelName.trim().toLowerCase());
 			}
-//			System.out.println("end.....");
 		}
 		return result;
 
@@ -188,7 +196,6 @@ public class ReservationRequest {
 
 			endDate = (Date) formatter.parse(checkOut);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		long interval = 24 * 1000 * 60 * 60;
@@ -198,7 +205,6 @@ public class ReservationRequest {
 		while (startTime <= endTime) {
 			dates.add(new Date(startTime));
 			startTime += interval;
-			// return dates;
 		}
 		return dates;
 	}
@@ -222,6 +228,8 @@ public class ReservationRequest {
 	}
 
 	public static int getTotalRoomsForHotel(String hotelName, ArrayList<HotelsInfo> HotelsInfoArray) {
+
+		
 		int value = 0;
 
 		for (HotelsInfo hotelsInfo : HotelsInfoArray) {
@@ -232,4 +240,7 @@ public class ReservationRequest {
 
 		return value;
 	}
+
+	
+
 }
